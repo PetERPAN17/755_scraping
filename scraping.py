@@ -3,6 +3,10 @@ import urllib.error
 import requests # pip install requests
 import bs4 # pip install beautifulsoup4
 
+import connectDB # connectDB.py
+
+db = connectDB.connectDB()
+
 # Media download
 def __media_download(downloadUrl, saveFilename):
     try:
@@ -27,19 +31,21 @@ def __media_download(downloadUrl, saveFilename):
 nanagogoUrl = 'https://7gogo.jp/'
 
 # Get Member List
-members = ['tanaka-miku']
+memberInfos = db.getSelectAll(['id', 'name', 'url_prefix'], 'members')
+# for memberInfo in  memberInfos:
+#     print(memberInfo)
 
 # Loop Members
-for member in  members:
+for memberInfo in  memberInfos:
 
     # Get last number processed
-    lastNumber = 32069
+    lastNumber = db.getSelectOne(['last_number'], 'article_numbers', 'member_id = ' + repr(memberInfo[0]))
 
     # Set now number
     nowNumber = lastNumber + 1
 
     # request WEB page
-    response = requests.get(nanagogoUrl + member + '/' + repr(nowNumber))
+    response = requests.get(nanagogoUrl + memberInfo[2] + '/' + repr(nowNumber))
 
     # Confirmation status
     print(response.status_code)
