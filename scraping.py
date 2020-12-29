@@ -38,6 +38,8 @@ memberInfos = db.getSelectAll(['id', 'name', 'url_prefix'], 'members')
 # Loop Members
 for memberInfo in  memberInfos:
 
+    # Get last article's number.
+
     # Get last number processed
     lastNumber = db.getSelectOne(['last_number'], 'article_numbers', 'member_id = ' + repr(memberInfo[0]))
 
@@ -46,6 +48,8 @@ for memberInfo in  memberInfos:
 
     # request WEB page
     response = requests.get(nanagogoUrl + memberInfo[2] + '/' + repr(nowNumber))
+
+    # !!!!!!! Get the article's link that if the reference article.
 
     # Confirmation status
     print(response.status_code)
@@ -90,3 +94,5 @@ for memberInfo in  memberInfos:
             saveFilename = repr(nowNumber) + '.jpg'
 
             __media_download(imgUrl, saveFilename)
+
+    # If the article is twitter's link.
