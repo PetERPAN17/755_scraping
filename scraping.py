@@ -23,6 +23,25 @@ def __media_download(downloadUrl, saveFilename):
     else:
         urllib.request.urlcleanup() # Delete tmp file from urllib.request.urlretrieve
 
+# Get last number of Article
+def __getLastNumberOfArticle(nanagogoUrl, memberInfo):
+
+    theNameOfMember = memberInfo[2]
+
+    # Connect 755 page
+    response = requests.get(nanagogoUrl + theNameOfMember)
+
+    # Get HTML
+    html = bs4.BeautifulSoup(response.text , "html.parser" )
+
+    # Get article numbers in 755 page
+    numbersOfArticles = html.select('._1GqgG5a-._2T3KLkN-.Link')
+
+    # Get last number
+    for numbersOfArticle in numbersOfArticles:
+        lastNumber = numbersOfArticle.get('href').replace('/' + theNameOfMember + '/', '')
+    return lastNumber
+
 
 # -----------------------
 # Main Process
@@ -38,7 +57,7 @@ memberInfos = db.getSelectAll(['id', 'name', 'url_prefix'], 'members')
 # Loop Members
 for memberInfo in  memberInfos:
 
-    # Get last article's number.
+    lastNumberOfArticle = __getLastNumberOfArticle(nanagogoUrl, memberInfo)
 
     # Get last number processed
     lastNumber = db.getSelectOne(['last_number'], 'article_numbers', 'member_id = ' + repr(memberInfo[0]))
