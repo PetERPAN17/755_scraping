@@ -24,9 +24,7 @@ def __media_download(downloadUrl, saveFilename):
         urllib.request.urlcleanup() # Delete tmp file from urllib.request.urlretrieve
 
 # Get last number of Article
-def __getLastNumberOfArticle(nanagogoUrl, memberInfo):
-
-    theNameOfMember = memberInfo[2]
+def __getLastNumberOfArticle(nanagogoUrl, theNameOfMember):
 
     # Connect 755 page
     response = requests.get(nanagogoUrl + theNameOfMember)
@@ -40,7 +38,7 @@ def __getLastNumberOfArticle(nanagogoUrl, memberInfo):
     # Get last number
     for numbersOfArticle in numbersOfArticles:
         lastNumber = numbersOfArticle.get('href').replace('/' + theNameOfMember + '/', '')
-    return lastNumber
+    return int(lastNumber)
 
 
 # -----------------------
@@ -57,61 +55,71 @@ memberInfos = db.getSelectAll(['id', 'name', 'url_prefix'], 'members')
 # Loop Members
 for memberInfo in  memberInfos:
 
-    lastNumberOfArticle = __getLastNumberOfArticle(nanagogoUrl, memberInfo)
+    IdOfMember = memberInfo[1]
+    theNameOfMember = memberInfo[2]
 
-    # Get last number processed
-    lastNumber = db.getSelectOne(['last_number'], 'article_numbers', 'member_id = ' + repr(memberInfo[0]))
+    lastNumberOfArticle = __getLastNumberOfArticle(nanagogoUrl, theNameOfMember)
+
+    # Get last number of previous processin
+    lastNumberOfPreviousProcessing = db.getSelectOne(['last_number'], 'article_numbers', 'member_id = ' + repr(IdOfMember))
 
     # Set now number
-    nowNumber = lastNumber + 1
+    startNumberOfArticle = lastNumberOfPreviousProcessing + 1
 
-    # request WEB page
-    response = requests.get(nanagogoUrl + memberInfo[2] + '/' + repr(nowNumber))
+    for numberOfArticle in range(startNumberOfArticle, lastNumberOfArticle):
+        print(numberOfArticle)
 
-    # !!!!!!! Get the article's link that if the reference article.
+        # numberOfArticle = 32310
 
-    # Confirmation status
-    print(response.status_code)
+        # request WEB page
+        response = requests.get(nanagogoUrl + theNameOfMember + '/' + repr(numberOfArticle))
 
-    # Stop except status 200
-    response.raise_for_status()
+        # Confirmation status
+        print(response.status_code)
 
-    # Analisys HTML
-    soup = bs4.BeautifulSoup(response.text , "html.parser" )
+        # Stop when except status 200
+        response.raise_for_status()
 
-    # print(soup.main)
+        # Get HTML
+        html = bs4.BeautifulSoup(response.text , "html.parser" )
 
-    # Get certain class elements in analisys HTML
-    # elem = soup.select('._3DSDHo6-._2icsf9K-')
+        # print(soup.main)
 
-    # Create file
-    #with open('./miku.html', 'w') as file:
-        #for elem in elems:
-            #print(str(elem))
-            # Write text into file
-            #file.write(str(elem))
+        # Get certain class elements in analisys HTML
+        # elem = soup.select('._3DSDHo6-._2icsf9K-')
 
-        #file.write(str(elem)) # Write text into file
+        # Create file
+        #with open('./miku.html', 'w') as file:
+            #for elem in elems:
+                #print(str(elem))
+                # Write text into file
+                #file.write(str(elem))
 
-    # Get video Tag element in certain class elements in analisys HTML
-    videos = soup.select('._3DSDHo6-._2icsf9K- video')
-    if len(videos) != 0:
-        for video in videos:
-            videoUrl = video.get('src')
+            #file.write(str(elem)) # Write text into file
 
-            saveFilename = repr(nowNumber) + '.mp4'
+        # Get video Tag element in certain class elements in analisys HTML
+        videos = html.select('._3ii6YrF- video')
+        if len(videos) != 0:
+            for video in videos:
+                videoUrl = video.get('src')
 
-            __media_download(videoUrl, saveFilename)
+                saveFilename = repr(numberOfArticle) + '.mp4'
+
+                __media_download(videoUrl, saveFilename)
 
 
-    # Get img Tag element in certain class elements in analisys HTML
-    imgs = soup.select('._3DSDHo6-._2icsf9K- img')
-    if len(imgs) != 0:
-        for img in imgs:
-            imgUrl = img.get('data-src')
+        # Get img Tag element in certain class elements in analisys HTML
+        imgs = html.select('._3ii6YrF- img')
+        if len(imgs) != 0:
+            for img in imgs:
+                imgUrl = img.get('data-src')
 
-            saveFilename = repr(nowNumber) + '.jpg'
+                saveFilename = repr(numberOfArticle) + '.jpg'
 
-            __media_download(imgUrl, saveFilename)
+                __media_download(imgUrl, saveFilename)
 
-    # If the article is twitter's link.
+        # If the article is twitter's link.
+
+        break # !!!!!!!Delete it!!!!
+
+    exit() # !!!!!!!Delete it!!!!
