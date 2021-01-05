@@ -1,5 +1,6 @@
 import urllib.request
 import urllib.error
+import os
 import requests # pip install requests
 import bs4 # pip install beautifulsoup4
 
@@ -48,28 +49,41 @@ def __getLastNumberOfArticle(nanagogoUrl, theNameOfMember):
 nanagogoUrl = 'https://7gogo.jp/'
 
 # Get Member List
-memberInfos = db.getSelectAll(['id', 'name', 'url_prefix'], 'members')
+memberInfos = db.getSelectAll(['id', 'name', 'url_prefix', 'folder_name'], 'members')
 # for memberInfo in  memberInfos:
 #     print(memberInfo)
 
 # Loop Members
-for memberInfo in  memberInfos:
+for memberInfo in memberInfos:
 
-    IdOfMember = memberInfo[1]
+    IdOfMember = memberInfo[0]
     theNameOfMember = memberInfo[2]
+    folderName = memberInfo[3]
+
+    savingFolderPath = './' + folderName
+
+    # Check folder exists for saving
+    isDir = os.path.isdir(savingFolderPath)
+
+    # Create the folder if it doesn't exist.
+    if isDir == False :
+        os.mkdir(savingFolderPath)
 
     lastNumberOfArticle = __getLastNumberOfArticle(nanagogoUrl, theNameOfMember)
 
-    # Get last number of previous processin
+    # Get last number of previous processing
     lastNumberOfPreviousProcessing = db.getSelectOne(['last_number'], 'article_numbers', 'member_id = ' + repr(IdOfMember))
 
-    # Set now number
+    if lastNumberOfPreviousProcessing == lastNumberOfArticle :
+        continue
+
+    # Set start number
     startNumberOfArticle = lastNumberOfPreviousProcessing + 1
 
     for numberOfArticle in range(startNumberOfArticle, lastNumberOfArticle):
         print(numberOfArticle)
 
-        # numberOfArticle = 32310
+        numberOfArticle = 32416
 
         # request WEB page
         response = requests.get(nanagogoUrl + theNameOfMember + '/' + repr(numberOfArticle))
@@ -105,7 +119,7 @@ for memberInfo in  memberInfos:
 
                 saveFilename = repr(numberOfArticle) + '.mp4'
 
-                __media_download(videoUrl, saveFilename)
+                __media_download(videoUrl, savingFolderPath + '/' + saveFilename)
 
 
         # Get img Tag element in certain class elements in analisys HTML
@@ -116,7 +130,7 @@ for memberInfo in  memberInfos:
 
                 saveFilename = repr(numberOfArticle) + '.jpg'
 
-                __media_download(imgUrl, saveFilename)
+                __media_download(imgUrl, savingFolderPath + '/' + saveFilename)
 
         # If the article is twitter's link.
 
