@@ -101,11 +101,10 @@ for memberInfo in memberInfos:
         # Get HTML
         html = bs4.BeautifulSoup(response.text , "html.parser" )
 
-        # print(soup.main)
-
         # Get certain class elements in analisys HTML
         bodyOfArticle = html.select('._3DSDHo6-._2icsf9K-')
 
+        # Skip reference article
         if bodyOfArticle == [] :
             continue
 
@@ -141,6 +140,6 @@ for memberInfo in memberInfos:
 
                 __media_download(imgUrl, savingFolderPath + '/' + saveFilename)
 
-        break # !!!!!!!Delete it!!!!
+    break # !!!!!!!Delete it!!!!
 
     exit() # !!!!!!!Delete it!!!!
