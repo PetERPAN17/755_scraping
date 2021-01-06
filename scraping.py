@@ -80,10 +80,14 @@ for memberInfo in memberInfos:
     # Set start number
     startNumberOfArticle = lastNumberOfPreviousProcessing + 1
 
-    for numberOfArticle in range(startNumberOfArticle, lastNumberOfArticle):
-        print(numberOfArticle)
+    print(startNumberOfArticle)
+    print(lastNumberOfArticle)
 
-        numberOfArticle = 32416
+    for numberOfArticle in range(startNumberOfArticle, lastNumberOfArticle):
+
+        numberOfArticle = 30987
+
+        print(numberOfArticle)
 
         # request WEB page
         response = requests.get(nanagogoUrl + theNameOfMember + '/' + repr(numberOfArticle))
@@ -100,16 +104,21 @@ for memberInfo in memberInfos:
         # print(soup.main)
 
         # Get certain class elements in analisys HTML
-        # elem = soup.select('._3DSDHo6-._2icsf9K-')
+        bodyOfArticle = html.select('._3DSDHo6-._2icsf9K-')
+
+        if bodyOfArticle == [] :
+            continue
+
+        # Set CSS
+        CssCode = '<head><link rel="stylesheet" href="./tes2_files/app.css" data-reactid="11"></head>'
 
         # Create file
-        #with open('./miku.html', 'w') as file:
-            #for elem in elems:
-                #print(str(elem))
-                # Write text into file
-                #file.write(str(elem))
+        with open(savingFolderPath + '/' + repr(numberOfArticle) + '.html', 'w') as file:
+            for elem in bodyOfArticle:
+                # print(str(elem))
 
-            #file.write(str(elem)) # Write text into file
+                # Write text into file
+                file.write(CssCode + str(elem))
 
         # Get video Tag element in certain class elements in analisys HTML
         videos = html.select('._3ii6YrF- video')
@@ -131,8 +140,6 @@ for memberInfo in memberInfos:
                 saveFilename = repr(numberOfArticle) + '.jpg'
 
                 __media_download(imgUrl, savingFolderPath + '/' + saveFilename)
-
-        # If the article is twitter's link.
 
         break # !!!!!!!Delete it!!!!
 
