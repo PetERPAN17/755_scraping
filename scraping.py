@@ -1,6 +1,7 @@
 import urllib.request
 import urllib.error
 import os
+import time
 import requests # pip install requests
 import bs4 # pip install beautifulsoup4
 
@@ -46,6 +47,9 @@ def __getLastNumberOfArticle(nanagogoUrl, theNameOfMember):
 # Main Process
 # -----------------------
 
+limitNumberOfExecutions = int(input('Enter a limit number of execution : '))
+startNumberOfExecution = 0
+
 nanagogoUrl = 'https://7gogo.jp/'
 
 # Get Member List
@@ -74,29 +78,33 @@ for memberInfo in memberInfos:
     # Get last number of previous processing
     lastNumberOfPreviousProcessing = db.getSelectOne(['last_number'], 'article_numbers', 'member_id = ' + repr(IdOfMember))
 
+    # Skip if a new article doesn'n exist.
     if lastNumberOfPreviousProcessing == lastNumberOfArticle :
         continue
 
     # Set start number
     startNumberOfArticle = lastNumberOfPreviousProcessing + 1
 
-    print(startNumberOfArticle)
-    print(lastNumberOfArticle)
-
     for numberOfArticle in range(startNumberOfArticle, lastNumberOfArticle):
 
-        numberOfArticle = 30987
+        # Limit number of executions
+        if limitNumberOfExecutions == startNumberOfExecution :
+            print('Stop process. ' + repr(startNumberOfExecution) + 'times execution.')
+            exit()
 
-        print(numberOfArticle)
+        print('Article number : ' + repr(numberOfArticle))
 
         # request WEB page
         response = requests.get(nanagogoUrl + theNameOfMember + '/' + repr(numberOfArticle))
 
         # Confirmation status
-        print(response.status_code)
+        print('Request result : ' + repr(response.status_code))
 
         # Stop when except status 200
-        response.raise_for_status()
+        # response.raise_for_status()
+        if response.status_code != 200 :
+            print('Request status is not 200. Article number is ' + repr(numberOfArticle) + '.')
+            exit()
 
         # Get HTML
         html = bs4.BeautifulSoup(response.text , "html.parser" )
@@ -104,8 +112,10 @@ for memberInfo in memberInfos:
         # Get certain class elements in analisys HTML
         bodyOfArticle = html.select('._3DSDHo6-._2icsf9K-')
 
-        # Skip reference article
+        # Skip if reference article
         if bodyOfArticle == [] :
+            # Start the number of execution increasing
+            startNumberOfExecution += 1
             continue
 
         # Set CSS
@@ -140,6 +150,9 @@ for memberInfo in memberInfos:
 
                 __media_download(imgUrl, savingFolderPath + '/' + saveFilename)
 
-    break # !!!!!!!Delete it!!!!
+        # Saving last number
 
-    exit() # !!!!!!!Delete it!!!!
+        # Start the number of execution increasing
+        startNumberOfExecution += 1
+
+        time.sleep(1)
