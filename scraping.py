@@ -141,7 +141,7 @@ for memberInfo in memberInfos:
 
 
         # Get img Tag element in certain class elements in analisys HTML
-        imgs = html.select('._3ii6YrF- img')
+        imgs = html.select('.AlTY-23- img')
         if len(imgs) != 0:
             for img in imgs:
                 imgUrl = img.get('data-src')
@@ -156,4 +156,4 @@ for memberInfo in memberInfos:
         # Start the number of execution increasing
         startNumberOfExecution += 1
 
-        time.sleep(3)
+        time.sleep(5)
