@@ -156,4 +156,4 @@ for memberInfo in memberInfos:
         # Start the number of execution increasing
         startNumberOfExecution += 1
 
-        time.sleep(1)
+        time.sleep(3)
