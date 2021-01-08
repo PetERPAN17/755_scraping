@@ -119,7 +119,7 @@ for memberInfo in memberInfos:
             continue
 
         # Set CSS
-        CssCode = '<head><link rel="stylesheet" href="./tes2_files/app.css" data-reactid="11"></head>'
+        CssCode = '<head><link rel="stylesheet" href="./_app.css" data-reactid="11"></head><br><br><br><br><br><br><br>'
 
         # Create file
         with open(savingFolderPath + '/' + repr(numberOfArticle) + '.html', 'w') as file:
