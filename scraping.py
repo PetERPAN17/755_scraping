@@ -101,11 +101,10 @@ for memberInfo in memberInfos:
         print('Request result : ' + repr(response.status_code))
 
         # Stop when except status 200
+        # response.raise_for_status()
         if response.status_code != 200 :
             print('Request status is not 200. Article number is ' + repr(numberOfArticle) + '.')
             exit()
-
-        # response.raise_for_status()
 
         # Get HTML
         html = bs4.BeautifulSoup(response.text , "html.parser" )
