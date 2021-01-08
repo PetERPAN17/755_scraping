@@ -30,7 +30,17 @@ class connectDB:
 
         if conditions:
             sql += ' WHERE ' + conditions
-        print(sql)
+        # print(sql)
+        return sql
+
+    def __makeUpdateSQL(self, table, setValues, conditions = None):
+        sql = 'UPDATE ' \
+                + table \
+                + ' SET ' \
+                + setValues
+
+        if conditions:
+            sql += ' WHERE ' + conditions
         return sql
 
     def getSelectAll(self, select, table, conditions = None):
@@ -45,6 +55,11 @@ class connectDB:
         row = self.cursor.fetchone()
         for value in row:
             return value
+
+    def updateData(self, table, setValues, conditions = None):
+        sql = connectDB.__makeUpdateSQL(self, table, setValues, conditions)
+        self.cursor.execute(sql)
+        self.connection.commit()
 
     def __dbCommint(self):
         self.connection.commit()

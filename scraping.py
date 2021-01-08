@@ -151,6 +151,7 @@ for memberInfo in memberInfos:
                 __media_download(imgUrl, savingFolderPath + '/' + saveFilename)
 
         # Saving last number
+        db.updateData('article_numbers', 'last_number = ' + repr(numberOfArticle), 'member_id = ' + repr(IdOfMember))
 
         # Start the number of execution increasing
         startNumberOfExecution += 1
