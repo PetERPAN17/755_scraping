@@ -63,7 +63,6 @@ for memberInfo in memberInfos:
 
     IdOfMember = memberInfo[0]
     theNameOfMember = memberInfo[1]
-    print('Member : ' + theNameOfMember)
     urlPrefixOfMember = memberInfo[2]
     folderName = memberInfo[3]
 
@@ -95,13 +94,11 @@ for memberInfo in memberInfos:
             print('Stop process. ' + repr(startNumberOfExecution) + 'times execution.')
             exit()
 
-        print('Article number : ' + repr(numberOfArticle))
+        print('Member : ' + theNameOfMember + ' / Article number : ' + repr(numberOfArticle))
 
         # Init try count
         retryCount = 1
         while (True) :
-            print('Retry count : ' + repr(retryCount))
-
             # request WEB page
             response = requests.get(nanagogoUrl + urlPrefixOfMember + '/' + repr(numberOfArticle))
 
@@ -112,6 +109,7 @@ for memberInfo in memberInfos:
             responseResult = response.status_code
             if responseResult != 200 :
                 print('Request status is not 200. Article number is ' + repr(numberOfArticle) + '.')
+                print('Retry count : ' + repr(retryCount))
 
                 if retryCount == 10 :
                     print('Stop process. Article number is ' + repr(numberOfArticle) + '.')
