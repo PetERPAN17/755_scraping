@@ -26,10 +26,10 @@ def __media_download(downloadUrl, saveFilename):
         urllib.request.urlcleanup() # Delete tmp file from urllib.request.urlretrieve
 
 # Get last number of Article
-def __getLastNumberOfArticle(nanagogoUrl, theNameOfMember):
+def __getLastNumberOfArticle(nanagogoUrl, urlPrefixOfMember):
 
     # Connect 755 page
-    response = requests.get(nanagogoUrl + theNameOfMember)
+    response = requests.get(nanagogoUrl + urlPrefixOfMember)
 
     # Get HTML
     html = bs4.BeautifulSoup(response.text , "html.parser" )
@@ -39,8 +39,9 @@ def __getLastNumberOfArticle(nanagogoUrl, theNameOfMember):
 
     # Get last number
     for numbersOfArticle in numbersOfArticles:
-        lastNumber = numbersOfArticle.get('href').replace('/' + theNameOfMember + '/', '')
-    return int(lastNumber)
+        lastNumber = numbersOfArticle.get('href').replace('/' + urlPrefixOfMember + '/', '')
+    print('The number of last article is ' + repr(lastNumber))
+    return int(lastNumber) + 1
 
 
 # -----------------------
@@ -61,7 +62,9 @@ memberInfos = db.getSelectAll(['id', 'name', 'url_prefix', 'folder_name'], 'memb
 for memberInfo in memberInfos:
 
     IdOfMember = memberInfo[0]
-    theNameOfMember = memberInfo[2]
+    theNameOfMember = memberInfo[1]
+    print('Member : ' + theNameOfMember)
+    urlPrefixOfMember = memberInfo[2]
     folderName = memberInfo[3]
 
     savingFolderPath = './' + folderName
@@ -73,7 +76,7 @@ for memberInfo in memberInfos:
     if isDir == False :
         os.mkdir(savingFolderPath)
 
-    lastNumberOfArticle = __getLastNumberOfArticle(nanagogoUrl, theNameOfMember)
+    lastNumberOfArticle = __getLastNumberOfArticle(nanagogoUrl, urlPrefixOfMember)
 
     # Get last number of previous processing
     lastNumberOfPreviousProcessing = db.getSelectOne(['last_number'], 'article_numbers', 'member_id = ' + repr(IdOfMember))
@@ -94,16 +97,33 @@ for memberInfo in memberInfos:
 
         print('Article number : ' + repr(numberOfArticle))
 
-        # request WEB page
-        response = requests.get(nanagogoUrl + theNameOfMember + '/' + repr(numberOfArticle))
+        # Init try count
+        retryCount = 1
+        while (True) :
+            print('Retry count : ' + repr(retryCount))
 
-        # Confirmation status
-        print('Request result : ' + repr(response.status_code))
+            # request WEB page
+            response = requests.get(nanagogoUrl + urlPrefixOfMember + '/' + repr(numberOfArticle))
 
-        # Stop when except status 200
-        # response.raise_for_status()
-        if response.status_code != 200 :
-            print('Request status is not 200. Article number is ' + repr(numberOfArticle) + '.')
+            # Confirmation status
+            print('Request result : ' + repr(response.status_code))
+
+            # Stop when except status 200
+            responseResult = response.status_code
+            if responseResult != 200 :
+                print('Request status is not 200. Article number is ' + repr(numberOfArticle) + '.')
+
+                if retryCount == 10 :
+                    print('Stop process. Article number is ' + repr(numberOfArticle) + '.')
+                    exit()
+                else :
+                    retryCount += 1
+                    time.sleep(5)
+                    continue
+            elif responseResult == 200 :
+                break
+
+            print('Stop process. While process is an error. responseResult is : ' + repr(responseResult))
             exit()
 
         # Get HTML
@@ -152,8 +172,5 @@ for memberInfo in memberInfos:
 
         # Saving last number
         db.updateData('article_numbers', 'last_number = ' + repr(numberOfArticle), 'member_id = ' + repr(IdOfMember))
-
-        # Start the number of execution increasing
-        startNumberOfExecution += 1
 
         time.sleep(5)
