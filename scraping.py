@@ -63,6 +63,7 @@ for memberInfo in memberInfos:
 
     IdOfMember = memberInfo[0]
     theNameOfMember = memberInfo[1]
+    print('Member\'s name : ' + theNameOfMember)
     urlPrefixOfMember = memberInfo[2]
     folderName = memberInfo[3]
 
@@ -94,7 +95,8 @@ for memberInfo in memberInfos:
             print('Stop process. ' + repr(startNumberOfExecution) + 'times execution.')
             exit()
 
-        print('Member : ' + theNameOfMember + ' / Article number : ' + repr(numberOfArticle))
+        print('Member : ' + theNameOfMember + ' / The processing article number : ' + repr(numberOfArticle) + \
+            ' / The last article\'s number : ' + repr(lastNumberOfArticle - 1))
 
         # Init try count
         retryCount = 1
