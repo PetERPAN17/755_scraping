@@ -49,7 +49,7 @@ def __getLastNumberOfArticle(nanagogoUrl, urlPrefixOfMember):
 # -----------------------
 
 limitNumberOfExecutions = int(input('Enter a limit number of execution : '))
-startNumberOfExecution = 0
+countNumberOfExecution = 0
 
 nanagogoUrl = 'https://7gogo.jp/'
 
@@ -91,8 +91,8 @@ for memberInfo in memberInfos:
     for numberOfArticle in range(startNumberOfArticle, lastNumberOfArticle):
 
         # Limit number of executions
-        if limitNumberOfExecutions == startNumberOfExecution :
-            print('Stop process. ' + repr(startNumberOfExecution) + 'times execution.')
+        if limitNumberOfExecutions == countNumberOfExecution :
+            print('Stop process. ' + repr(countNumberOfExecution) + 'times execution.')
             exit()
 
         print('Member : ' + theNameOfMember + ' / The processing article number : ' + repr(numberOfArticle) + \
@@ -140,8 +140,8 @@ for memberInfo in memberInfos:
 
         # Skip if reference article
         if bodyOfArticle == [] :
-            # Start the number of execution increasing
-            startNumberOfExecution += 1
+            # The execution count increasing
+            countNumberOfExecution += 1
             continue
 
         # Set CSS
@@ -178,5 +178,8 @@ for memberInfo in memberInfos:
 
         # Saving last number
         db.updateData('article_numbers', 'last_number = ' + repr(numberOfArticle), 'member_id = ' + repr(IdOfMember))
+
+        # The execution count increasing
+        countNumberOfExecution += 1
 
         time.sleep(5)
