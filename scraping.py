@@ -114,8 +114,8 @@ for memberInfo in memberInfos:
                 print('Retry count : ' + repr(retryCount))
 
                 if retryCount == 10 :
-                    print('Stop process. Article number is ' + repr(numberOfArticle) + '.')
-                    exit()
+                    print('Skip Article. Article number is ' + repr(numberOfArticle) + '.')
+                    break
                 else :
                     retryCount += 1
                     time.sleep(5)
@@ -125,6 +125,12 @@ for memberInfo in memberInfos:
 
             print('Stop process. While process is an error. responseResult is : ' + repr(responseResult))
             exit()
+
+        # Skip if the article that 10times of requests failed.
+        if retryCount == 10 :
+            # Saving last number
+            db.updateData('article_numbers', 'last_number = ' + repr(numberOfArticle), 'member_id = ' + repr(IdOfMember))
+            continue
 
         # Get HTML
         html = bs4.BeautifulSoup(response.text , "html.parser" )
