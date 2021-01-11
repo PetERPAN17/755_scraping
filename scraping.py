@@ -48,15 +48,15 @@ def __getLastNumberOfArticle(nanagogoUrl, urlPrefixOfMember):
 # Main Process
 # -----------------------
 
-limitNumberOfExecutions = int(input('Enter a limit number of execution : '))
-countNumberOfExecution = 0
-
 nanagogoUrl = 'https://7gogo.jp/'
 
 # Get Member List
 memberInfos = db.getSelectAll(['id', 'name', 'url_prefix', 'folder_name'], 'members')
 # for memberInfo in  memberInfos:
 #     print(memberInfo)
+
+limitNumberOfExecutions = int(input('Enter a limit number of execution : '))
+countNumberOfExecution = 0
 
 # Loop Members
 for memberInfo in memberInfos:
