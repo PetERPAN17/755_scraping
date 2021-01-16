@@ -147,8 +147,11 @@ for memberInfo in memberInfos:
         # Set CSS
         CssCode = '<head><link rel="stylesheet" href="./_app.css" data-reactid="11"></head><br><br><br><br><br><br><br>'
 
+        # Set Download filename
+        saveFilename = folderName + '_' + repr(numberOfArticle)
+
         # Create file
-        with open(savingFolderPath + '/' + repr(numberOfArticle) + '.html', 'w') as file:
+        with open(savingFolderPath + '/' + saveFilename + '.html', 'w') as file:
             for elem in bodyOfArticle:
                 # print(str(elem))
 
@@ -161,9 +164,7 @@ for memberInfo in memberInfos:
             for video in videos:
                 videoUrl = video.get('src')
 
-                saveFilename = repr(numberOfArticle) + '.mp4'
-
-                __media_download(videoUrl, savingFolderPath + '/' + saveFilename)
+                __media_download(videoUrl, savingFolderPath + '/' + saveFilename + '.mp4')
 
 
         # Get img Tag element in certain class elements in analisys HTML
@@ -172,9 +173,7 @@ for memberInfo in memberInfos:
             for img in imgs:
                 imgUrl = img.get('data-src')
 
-                saveFilename = repr(numberOfArticle) + '.jpg'
-
-                __media_download(imgUrl, savingFolderPath + '/' + saveFilename)
+                __media_download(imgUrl, savingFolderPath + '/' + saveFilename + '.jpg')
 
         # Saving last number
         db.updateData('article_numbers', 'last_number = ' + repr(numberOfArticle), 'member_id = ' + repr(IdOfMember))
