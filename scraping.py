@@ -40,6 +40,8 @@ def __getLastNumberOfArticle(nanagogoUrl, urlPrefixOfMember):
     # Get last number
     for numbersOfArticle in numbersOfArticles:
         lastNumber = numbersOfArticle.get('href').replace('/' + urlPrefixOfMember + '/', '')
+
+    print('lastNumber is ' + lastNumber)
     print('The number of last article is ' + repr(lastNumber))
     return int(lastNumber) + 1
 
