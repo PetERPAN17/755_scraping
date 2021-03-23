@@ -30,6 +30,9 @@ def __getLastNumberOfArticle(nanagogoUrl, urlPrefixOfMember):
 
     # Connect 755 page
     response = requests.get(nanagogoUrl + urlPrefixOfMember)
+    while response.status_code != 200:
+        print('Request retry')
+        response = requests.get(nanagogoUrl + urlPrefixOfMember)
 
     # Get HTML
     html = bs4.BeautifulSoup(response.text , "html.parser" )
