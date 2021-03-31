@@ -100,7 +100,7 @@ for memberInfo in memberInfos:
             print('Stop process. ' + repr(countNumberOfExecution) + 'times execution.')
             exit()
 
-        print('Member : ' + theNameOfMember + ' / The processing article number : ' + repr(numberOfArticle) + \
+        print('Member : ' + repr(IdOfMember) + ' ' + theNameOfMember + ' / The processing article number : ' + repr(numberOfArticle) + \
             ' / The last article\'s number : ' + repr(lastNumberOfArticle - 1))
 
         # Init try count
