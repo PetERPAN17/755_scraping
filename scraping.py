@@ -1,3 +1,4 @@
+import datetime
 import urllib.request
 import urllib.error
 import os
@@ -8,6 +9,10 @@ import bs4 # pip install beautifulsoup4
 import connectDB # connectDB.py
 
 db = connectDB.connectDB()
+
+def getDateTime():
+    UTC_Now = datetime.datetime.utcnow()
+    return repr(UTC_Now.year) + repr(UTC_Now.month) + repr(UTC_Now.day) + '_' + repr(UTC_Now.hour) + repr(UTC_Now.minute)
 
 # Media download
 def __media_download(downloadUrl, saveFilename):
@@ -153,7 +158,7 @@ for memberInfo in memberInfos:
         CssCode = '<head><link rel="stylesheet" href="./_app.css" data-reactid="11"></head><br><br><br><br><br><br><br>'
 
         # Set Download filename
-        saveFilename = folderName + '_' + repr(numberOfArticle)
+        saveFilename = folderName + '_' + repr(numberOfArticle) + '_DL_at_' + getDateTime()
 
         # Create file
         with open(savingFolderPath + '/' + saveFilename + '.html', 'w') as file:
