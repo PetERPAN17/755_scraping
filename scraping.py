@@ -76,15 +76,7 @@ for memberInfo in memberInfos:
     print('Member\'s name : ' + theNameOfMember)
     urlPrefixOfMember = memberInfo[2]
     folderName = memberInfo[3]
-
     savingFolderPath = './' + folderName
-
-    # Check folder exists for saving
-    isDir = os.path.isdir(savingFolderPath)
-
-    # Create the folder if it doesn't exist.
-    if isDir == False :
-        os.mkdir(savingFolderPath)
 
     lastNumberOfArticle = __getLastNumberOfArticle(nanagogoUrl, urlPrefixOfMember)
 
@@ -107,6 +99,13 @@ for memberInfo in memberInfos:
 
         print('Member : ' + repr(IdOfMember) + ' ' + theNameOfMember + ' / The processing article number : ' + repr(numberOfArticle) + \
             ' / The last article\'s number : ' + repr(lastNumberOfArticle - 1))
+
+        # Check folder exists for saving
+        isDir = os.path.isdir(savingFolderPath)
+
+        # Create the folder if it doesn't exist.
+        if isDir == False :
+            os.mkdir(savingFolderPath)
 
         # Init try count
         retryCount = 1
