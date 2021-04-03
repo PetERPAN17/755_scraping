@@ -12,7 +12,12 @@ db = connectDB.connectDB()
 
 def getDateTime():
     UTC_Now = datetime.datetime.utcnow()
-    return repr(UTC_Now.year) + repr(UTC_Now.month) + repr(UTC_Now.day) + '_' + repr(UTC_Now.hour) + repr(UTC_Now.minute)
+    month = '%02d'%UTC_Now.month
+    day = '%02d'%UTC_Now.day
+    hour = '%02d'%UTC_Now.hour
+    minute = '%02d'%UTC_Now.minute
+
+    return str(UTC_Now.year) + month + day + '_' + hour + minute
 
 # Media download
 def __media_download(downloadUrl, saveFilename):
