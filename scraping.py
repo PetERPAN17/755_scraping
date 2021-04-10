@@ -1,3 +1,4 @@
+import sys, getopt
 import datetime
 import urllib.request
 import urllib.error
@@ -9,8 +10,20 @@ import bs4 # pip install beautifulsoup4
 import connectDB # connectDB.py
 
 db = connectDB.connectDB()
+limitNumberOfExecutions = 0
 
-def getDateTime():
+def __init(arguments):
+    global limitNumberOfExecutions
+    try:
+        opts, args = getopt.getopt(arguments,"l:",["limitnumber="])
+    except getopt.GetoptError:
+        print('GetoptError')
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt in ("-l", "--limitnumber"):
+            limitNumberOfExecutions = int(arg)
+
+def __getDateTime():
     UTC_Now = datetime.datetime.utcnow()
     month = '%02d'%UTC_Now.month
     day = '%02d'%UTC_Now.day
@@ -63,6 +76,8 @@ def __getLastNumberOfArticle(nanagogoUrl, urlPrefixOfMember):
 # Main Process
 # -----------------------
 
+__init(sys.argv[1:])
+
 nanagogoUrl = 'https://7gogo.jp/'
 
 # Get Member List
@@ -70,7 +85,6 @@ memberInfos = db.getSelectAll(['id', 'name', 'url_prefix', 'folder_name'], 'memb
 # for memberInfo in  memberInfos:
 #     print(memberInfo)
 
-limitNumberOfExecutions = int(input('Enter a limit number of execution : '))
 countNumberOfExecution = 0
 
 # Loop Members
@@ -100,7 +114,7 @@ for memberInfo in memberInfos:
         # Limit number of executions
         if limitNumberOfExecutions == countNumberOfExecution :
             print('Stop process. ' + repr(countNumberOfExecution) + 'times execution.')
-            exit()
+            sys.exit()
 
         print('Member : ' + repr(IdOfMember) + ' ' + theNameOfMember + ' / The processing article number : ' + repr(numberOfArticle) + \
             ' / The last article\'s number : ' + repr(lastNumberOfArticle - 1))
@@ -138,7 +152,7 @@ for memberInfo in memberInfos:
                 break
 
             print('Stop process. While process is an error. responseResult is : ' + repr(responseResult))
-            exit()
+            sys.exit()
 
         # Skip if the article that 10times of requests failed.
         if retryCount == 10 :
@@ -162,7 +176,7 @@ for memberInfo in memberInfos:
         CssCode = '<head><link rel="stylesheet" href="./_app.css" data-reactid="11"></head><br><br><br><br><br><br><br>'
 
         # Set Download filename
-        saveFilename = folderName + '_' + repr(numberOfArticle) + '_DL_at_' + getDateTime()
+        saveFilename = folderName + '_' + repr(numberOfArticle) + '_DL_at_' + __getDateTime()
 
         # Create file
         with open(savingFolderPath + '/' + saveFilename + '.html', 'w') as file:
